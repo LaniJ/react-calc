@@ -1,14 +1,15 @@
+import { useEffect } from 'react';
 import { useState } from 'react';
 import './calculator.css';
 
 const Calculator = () => {
   const [ prevOperand, setPrevOperand ] = useState('')
   const [ currOperand, setCurrOperand ] = useState('')
+  const [ displayVal, setDisplayVal ] = useState(0)
   const [ operation, setOperation ] = useState(null)
   const [ total, setTotal ] = useState(0)
 
   const handleClick = (value) => {
-    console.log('operation', operation)
     operation ? rightOperand(value) : leftOperand(value)
   }
   const clearPrevCalculation = (val) => {
@@ -21,42 +22,71 @@ const Calculator = () => {
   }
 
   const rightOperand = (value) => {
-    setCurrOperand((prev) => prev + value)
+    console.log('rightOperand');
+    setTotal(0)
+    setCurrOperand((prev) => {
+      if (value === 0 && prev === '') return prev
+      if (value === "." && prev.includes(".")) return prev
+      return prev + value
+    })
   }
   const leftOperand = (value) => {
-    setPrevOperand((prev) => prev + value)
+    console.log('leftOperand');
+    setTotal(0)
+    setPrevOperand((prev) => {
+      if (value === 0 && prev === '') return prev
+      if (value === "." && prev.includes(".")) return prev
+      return prev + value
+    })
   }
 
   const calculate = () => {
     switch(operation) {
       case '+' :
         setTotal(Number(prevOperand) + Number(currOperand))
-        console.log('addition')
         break;
       case '*' :
         setTotal(Number(prevOperand) * Number(currOperand))
-        console.log('multi')
         break;
       case '/' :
         setTotal(Number(prevOperand) / Number(currOperand))
-        console.log('division')
         break;
       default:
         setTotal(Number(prevOperand) - Number(currOperand))
-        console.log('sub')
     }
     clearPrevCalculation()
+    // setOperation(null)
+    // setPrevOperand('');
+    // setCurrOperand('');
   }
   const handleOperation = (operation) => {
-    setOperation(operation)
+    if (prevOperand) {
+      setOperation(operation)
+    }
   }
+
+  useEffect(() => {
+    if (total) {
+      console.log('total');
+      setDisplayVal(total)
+      return
+    }  else if (currOperand) {
+      console.log('currOperand');
+      setDisplayVal(currOperand)
+      return
+    } else {
+      console.log('prevOperand');
+      setDisplayVal(prevOperand || 0)
+      return
+    }
+  }, [total, currOperand, prevOperand])
 
 
   return ( 
     <div className="calculator-container">
       <div className='output'>
-        <div className='prev_operand'>{prevOperand}</div>
-        <div className='curr_operand'>{total}</div>
+        {/* <div className='prev_operand'>{prevOperand}</div> */}
+        <div className='curr_operand'>{displayVal}</div>
       </div>
       <button onClick={() => handleOperation('+')}>+</button>
       <button onClick={() => handleOperation('-')}>-</button>
