@@ -33,6 +33,7 @@ html {
 .output .prev_operand {
   color: rgba(255, 255, 255, .75);
   font-size: 1.5rem;
+  height: 17px;
 }
 .output .curr_operand {
   color: #FFFFFF;
