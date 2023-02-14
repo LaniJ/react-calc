@@ -8,6 +8,7 @@ const Calculator = () => {
   const [ displayVal, setDisplayVal ] = useState(0)
   const [ operation, setOperation ] = useState(null)
   const [ total, setTotal ] = useState(0)
+  const [multiCalculation, setMultiCalculation] = useState(false)
 
   const handleClick = (value) => {
     operation ? rightOperand(value) : leftOperand(value)
@@ -16,13 +17,19 @@ const Calculator = () => {
     if (val) {
       setTotal(0)
     }
-    setOperation(null)
     setPrevOperand('');
     setCurrOperand('');
+    setOperation(null)
+   
+  }
+  const updateCalculation = (operation) => {
+    setMultiCalculation(true)
+    // setPrevOperand(total);
+    setCurrOperand('');
+    setOperation(operation)
   }
 
   const rightOperand = (value) => {
-    console.log('rightOperand');
     setTotal(0)
     setCurrOperand((prev) => {
       if (value === 0 && prev === '') return prev
@@ -31,7 +38,6 @@ const Calculator = () => {
     })
   }
   const leftOperand = (value) => {
-    console.log('leftOperand');
     setTotal(0)
     setPrevOperand((prev) => {
       if (value === 0 && prev === '') return prev
@@ -40,7 +46,7 @@ const Calculator = () => {
     })
   }
 
-  const calculate = () => {
+  const calculate = (newOperation) => {
     switch(operation) {
       case '+' :
         setTotal(Number(prevOperand) + Number(currOperand))
@@ -54,28 +60,31 @@ const Calculator = () => {
       default:
         setTotal(Number(prevOperand) - Number(currOperand))
     }
-    clearPrevCalculation()
-    // setOperation(null)
-    // setPrevOperand('');
-    // setCurrOperand('');
+    newOperation ? updateCalculation(newOperation) : clearPrevCalculation()
   }
-  const handleOperation = (operation) => {
-    if (prevOperand) {
-      setOperation(operation)
+  const handleOperation = (operationVal) => {
+    if (operation) {
+      calculate(operationVal)
+    } else if (prevOperand) {
+      setMultiCalculation(false)
+      setOperation(operationVal)
     }
   }
 
   useEffect(() => {
+    if (multiCalculation && total) {
+      setPrevOperand(total);
+    }
+  }, [multiCalculation, total])
+
+  useEffect(() => {
     if (total) {
-      console.log('total');
       setDisplayVal(total)
       return
     }  else if (currOperand) {
-      console.log('currOperand');
       setDisplayVal(currOperand)
       return
     } else {
-      console.log('prevOperand');
       setDisplayVal(prevOperand || 0)
       return
     }
