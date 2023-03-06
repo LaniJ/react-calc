@@ -20,7 +20,6 @@ const Calculator = () => {
     setPrevOperand('');
     setCurrOperand('');
     setOperation(null)
-   
   }
   const updateCalculation = (operation) => {
     setMultiCalculation(true)
@@ -67,6 +66,9 @@ const Calculator = () => {
       calculate(operationVal)
     } else if (prevOperand) {
       setMultiCalculation(false)
+      setOperation(operationVal)
+    } else if (!operation && total) {
+      setPrevOperand(total)
       setOperation(operationVal)
     }
   }
